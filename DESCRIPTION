@@ -1,0 +1,17 @@
+Package: etltools
+Type: Package
+Title: Various tools for ETL
+Version: 0.1.0
+Author: Vaclav Hausenblas
+Maintainer: Vaclav Hausenblas <vaclav.hausenblas@gmail.com>
+Description: Provides function for ETL pipelines such as extraction, loading, tranformation, conversion... 
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    data.table
+RoxygenNote: 6.1.1
+Suggests: 
+    testthat,
+    DBI,
+    RSQLite
