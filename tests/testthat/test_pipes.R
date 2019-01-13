@@ -1,7 +1,5 @@
 context("Pipes")
 
-library(etltools)
-
 if (!requireNamespace("DBI")) stop("DBI package required!")
 if (!requireNamespace("RSQLite")) stop("DBI package required!")
 

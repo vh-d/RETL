@@ -1,4 +1,4 @@
-Package: etltools
+Package: ETLtools
 Type: Package
 Title: Various tools for ETL
 Version: 0.1.0

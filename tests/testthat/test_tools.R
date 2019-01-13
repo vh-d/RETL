@@ -1,7 +1,5 @@
 context("Tools")
 
-library(etltools)
-
 test_that("is_apply() result length", {
   expect_length(is_apply(list(),   "character"), 0)
   expect_length(is_apply(list(""), "character"), 1)

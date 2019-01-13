@@ -1,4 +1,4 @@
 library(testthat)
-library(etltools)
+library(ETLtools)
 
-test_check("etltools")
+test_check("ETLtools")
