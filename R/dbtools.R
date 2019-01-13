@@ -1,6 +1,12 @@
+#' @param table character;name of the table
+#'
+#' @param cols character; vector of columns used for creating an index
+#' @param conn DBI connection
+#'
+#' @rdname set_index
 #' @export
 set_index <- function(table,
-                      cols = c("subjekt, obdobi, rozsah, stav, mv_id, ip, radek, sloupec"),
+                      cols,
                       conn) {
   if (try(DBI::dbIsValid(conn)) == TRUE) {
     dbExecute(
@@ -13,6 +19,7 @@ set_index <- function(table,
   }
 }
 
+#' @rdname set_index
 #' @export
 set_index_tables <- function(tables, ...){
   sapply(
