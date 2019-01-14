@@ -3,6 +3,7 @@
 S3method(convert_cols,data.table)
 S3method(lowercase_names,data.table)
 export(Date2Char)
+export(add_diff_value)
 export(convert_cols)
 export(etl_read)
 export(etl_write)
