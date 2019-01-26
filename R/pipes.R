@@ -94,7 +94,7 @@ etl_read.SQLiteConnection <- function(
   tab <- if (!is.null(schema)) paste0(schema, ".", name) else name
   
   DT <- do.call(
-    dbGetQuery,
+    DBI::dbGetQuery,
     args =
       c(list(
         conn = from,
@@ -200,7 +200,7 @@ etl_write.SQLiteConnection <- function(
   # tab <- if (!is.null(schema)) paste0(schema, ".", name) else name
 
   do.call(
-    dbWriteTable,
+    DBI::dbWriteTable,
     args = union.list(
       list(
         conn  = to,
