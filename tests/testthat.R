@@ -1,4 +1,4 @@
 library(testthat)
-library(ETLtools)
+library(RETL)
 
-test_check("ETLtools")
+test_check("RETL")

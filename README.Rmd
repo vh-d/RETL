@@ -13,14 +13,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-# ETLtools
+# RETL
 
-`ETLtools` is an R package that provides tools for ETL processes in R.
+`RETL` is an R package that aims to provide practical tools for ETL processes using R's wide range of APIs to data sources.
+
 
 ## Installation
 
-You can install the master version of ETLtools from [GitHub](https://github.com/vh-d/ETLtools) with:
+You can install the master version of RETL from [GitHub](https://github.com/vh-d/RETL) with:
 
 ``` r
-devtools::install_github("vh-d/ETLtools")
+devtools::install_github("vh-d/RETL")
 ```
