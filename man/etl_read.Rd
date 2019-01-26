@@ -5,11 +5,12 @@
 \title{Read (extract) part of ETL
 reading tables}
 \usage{
-etl_read(from, name, schema = NULL, asDT = TRUE, lowercase = TRUE,
-  ...)
+etl_read(from, ...)
 }
 \arguments{
 \item{from}{DBI/R environment/file name}
+
+\item{...}{args passed to read function}
 
 \item{name}{character; table name}
 
@@ -18,8 +19,6 @@ etl_read(from, name, schema = NULL, asDT = TRUE, lowercase = TRUE,
 \item{asDT}{logical}
 
 \item{lowercase}{logical;}
-
-\item{...}{args passed to read function}
 }
 \description{
 Read (extract) part of ETL

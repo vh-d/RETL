@@ -28,101 +28,28 @@ pipe_table <- function(
   lowercase   = TRUE
 ) {
 
-  tab <- if (!is.null(from_schema)) paste0(from_schema, ".", name) else name
-
-  if (tryCatch(DBI::dbIsValid(from), error = function(e) FALSE) == TRUE) {
-
-    DT <- do.call(
-      dbGetQuery,
-      args =
-        c(list(
-          conn = from,
-          statement = stringr::str_interp("select * from ${tab}")),
-          read_args
-        )
-    )
-
-  } else if (is(from, "odbc32")) {
-
-    DT <- do.call(
-      odbc32::sqlQuery,
-      args =
-        c(list(
-          con   = from,
-          query = stringr::str_interp("select * from ${tab}")),
-          read_args
-        )
-    )
-
-  } else if (is(from, "character") && grepl(".csv", from, ignore.case = TRUE)) {
-
-    DT <- do.call(
-      read.table,
-      args =
-        c(list(
-          file  = from
-        ),
-        read_args
-        )
-    )
-
-  } else if (is(from, "environment")) {
-
-    DT <- from[[tab]]
-
-  } else {
-    stop("'from' is neither an environemnt nor a DBI connection!")
-  }
-
-  if (asDT) setDT(DT)
+  DT <- 
+    etl_read(
+      from   = from, 
+      name   = name, 
+      schema = schema, 
+      asDT   = asDT)
+  
+  # if (asDT) setDT(DT)
   if (lowercase) DT <- lowercase(DT)
-
-  # for SQLite convert dates as character
-  if (is(to, "SQLiteConnection")) Date2Char(DT)
-
 
   # TRANFORM PART
   if (!is.null(transform)) DT <- transform(DT)
-
-
+  
   # WRITE PART
   if (!length(name_target)) name_target <- name[1]
-  tab <- if (!is.null(to_schema)) paste0(to_schema, ".", name[1]) else name[1]
 
-  if (tryCatch(DBI::dbIsValid(to), error = function(e) FALSE) == TRUE) {
+  etl_write(
+    to   = to, 
+    x    = DT,
+    name = name, 
+    schema = schema)
 
-    do.call(
-      dbWriteTable,
-      args = c(list(
-        conn  = to,
-        name  = tab,
-        value = DT),
-        write_args))
-
-  } else if (is(to, "odbc32")) {
-
-    tryCatch(odbc32::sqlDrop(con = to, name = tab), error = function(e) NULL)
-
-    # to avoid sending integer64 to 32-bit excel convert all to numeric
-    int64_to_numeric(DT)
-
-    do.call(
-      odbc32::sqlSave,
-      args = c(list(
-        con  = to,
-        name = tab,
-        data = DT),
-        write_args))
-
-  } else if (is(to, "environment")) {
-    setDT(DT)
-    to[[tab]] <- DT
-
-    return(invisible(TRUE))
-
-  } else {
-    stop("'to' is neither an environemnt not a DBI connection!")
-  }
 }
 
 #' pipe_table vectorized
@@ -151,34 +78,49 @@ pipe_tables <- function(tables, ...) {
 #' @param ... args passed to read function
 #'
 #' @export
-etl_read <- function(
+etl_read <- function(from, ...) {
+  UseMethod("etl_read", from)  
+}
+
+#' @export
+etl_read.SQLiteConnection <- function(
   from,
   name,
   schema = NULL,
-  asDT       = TRUE,
-  lowercase   = TRUE,
+  asDT   = TRUE,
   ...
 ) {
 
   tab <- if (!is.null(schema)) paste0(schema, ".", name) else name
+  
+  DT <- do.call(
+    dbGetQuery,
+    args =
+      c(list(
+        conn = from,
+        statement = stringr::str_interp("select * from ${tab}")),
+        ...
+      )
+  )
+  
+  if (asDT) setDT(DT)
+  
+  return(DT)
+}
 
-  if (tryCatch(DBI::dbIsValid(from), error = function(e) FALSE) == TRUE) {
 
-    DT <- do.call(
-      dbGetQuery,
-      args =
-        c(list(
-          conn = from,
-          statement = stringr::str_interp("select * from ${tab}")),
-          ...
-        )
-    )
+#' @export
+etl_read.odbc32 <- function(
+  from,
+  name,
+  schema = NULL,
+  asDT   = TRUE,
+  ...
+) {
 
-  } else if (is(from, "odbc32")) {
-
-    DT <- do.call(
-      odbc32::sqlQuery,
-      args =
+  DT <- do.call(
+    odbc32::sqlQuery,
+    args =
         c(list(
           con   = from,
           query = stringr::str_interp("select * from ${tab}")),
@@ -186,31 +128,53 @@ etl_read <- function(
         )
     )
 
-  } else if (is(from, "character") && grepl(".csv", from, ignore.case = TRUE)) {
-
-    DT <- do.call(
-      read.table,
-      args =
-        c(list(
-          file  = from
-        ),
-        ...
-        )
-    )
-
-  } else if (is(from, "environment")) {
-
-    DT <- from[[tab]]
-
-  } else {
-    stop("'from' is neither an environemnt nor a DBI connection!")
-  }
-
   if (asDT) setDT(DT)
-  if (lowercase) DT <- lowercase_names(DT)
-
+  
   return(DT)
 }
+
+
+#' @export
+etl_read.character <- function(
+  from,
+  name,
+  schema = NULL,
+  asDT   = TRUE,
+  ...
+) {
+  
+  DT <- do.call(
+    fread,
+    args = union.list(
+      list(
+        input = from
+      ),
+      list(...)
+    )
+  )
+  
+  if (!asDT) setDF(DT)
+  
+  return(DT)
+}
+
+#' @export
+etl_read.environment <- function(
+  from,
+  name,
+  schema = NULL,
+  asDT   = TRUE,
+  ...
+) {
+  
+  DT <- copy(from[[tab]])
+  
+  if (asDT) setDT(DT)
+  
+  return(DT)
+}
+
+
 
 #' Write (or load) part of ETL
 #'
@@ -221,7 +185,58 @@ etl_read <- function(
 #' @param ... arguments passed to write/load function
 #'
 #' @export
-etl_write <- function(
+etl_write <- function(to, ...) {
+  UseMethod("etl_write", to)
+}
+
+#' @export
+etl_write.SQLiteConnection <- function(
+  to,
+  x,
+  name,
+  schema = NULL,
+  ...
+) {
+  # tab <- if (!is.null(schema)) paste0(schema, ".", name) else name
+
+  do.call(
+    dbWriteTable,
+    args = union.list(
+      list(
+        conn  = to,
+        name  = name,
+        value = x),
+      list(...)
+      )
+  )
+  
+}
+
+
+#' @export
+etl_write.odbc32 <- function(
+  to,
+  x,
+  name,
+  schema = NULL,
+  ...
+) {
+  tryCatch(odbc32::sqlDrop(con = to, name = tab), error = function(e) NULL)
+  
+  do.call(
+    odbc32::sqlSave,
+    args = union.list(
+      list(
+        con  = to,
+        name = tab,
+        data = x),
+      list(...)
+    )
+  )
+}
+
+#' @export
+etl_write.character <- function(
   to,
   x,
   name,
@@ -229,38 +244,30 @@ etl_write <- function(
   ...
 ) {
 
-  tab <- if (!is.null(schema)) paste0(schema, ".", name) else name
+  do.call(
+    fwrite,
+    args = union.list(
+      list(
+        x    = x,
+        file = to
+      ),
+      list(...)
+    )
+  )
+  
+}
 
-  if (tryCatch(DBI::dbIsValid(to), error = function(e) FALSE) == TRUE) {
-
-    do.call(
-      dbWriteTable,
-      args = c(list(
-        conn  = to,
-        name  = tab,
-        value = x),
-        ...))
-
-  } else if (is(to, "odbc32")) {
-
-    tryCatch(odbc32::sqlDrop(con = to, name = tab), error = function(e) NULL)
-
-    do.call(
-      odbc32::sqlSave,
-      args = c(list(
-        con  = to,
-        name = tab,
-        data = x),
-        ...))
-
-  } else if (is(to, "environment")) {
-    setDT(x)
-    to[[tab]] <- x
-
-    return(invisible(TRUE))
-
-  } else {
-    stop("'to' object not recognized! Supported classes are DBI connection, odbc32 connection, R environment, character (csv file name)")
-  }
+#' @export
+etl_write.environment <- function(
+  to,
+  x,
+  name,
+  schema = NULL,
+  ...
+) {
+  
+  to[[name]] <- x
+  
+  return(invisible(TRUE))
 }
 

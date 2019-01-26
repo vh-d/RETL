@@ -4,18 +4,18 @@
 \alias{etl_write}
 \title{Write (or load) part of ETL}
 \usage{
-etl_write(to, x, name, schema = NULL, ...)
+etl_write(to, ...)
 }
 \arguments{
 \item{to}{DBI/R environment/file name}
+
+\item{...}{arguments passed to write/load function}
 
 \item{x}{data.frame object}
 
 \item{name}{character;target name}
 
 \item{schema}{character;}
-
-\item{...}{arguments passed to write/load function}
 }
 \description{
 Write (or load) part of ETL
