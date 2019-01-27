@@ -137,7 +137,7 @@ etl_read.odbc32 <- function(
 #' @export
 etl_read.character <- function(
   from,
-  name,
+  name   = NULL,
   schema = NULL,
   asDT   = TRUE,
   ...
@@ -239,7 +239,7 @@ etl_write.odbc32 <- function(
 etl_write.character <- function(
   to,
   x,
-  name,
+  name   = NULL,
   schema = NULL,
   ...
 ) {
