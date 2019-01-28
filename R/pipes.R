@@ -28,27 +28,38 @@ pipe_table <- function(
   lowercase   = TRUE
 ) {
 
-  DT <- 
-    etl_read(
-      from   = from, 
-      name   = name, 
-      schema = schema, 
-      asDT   = asDT)
+  DT <- do.call(
+    what = etl_read,
+    args = union.list(
+      list(
+        from   = from, 
+        name   = name, 
+        schema = from_schema, 
+        asDT   = asDT), 
+      read_args
+    )
+  )
   
   # if (asDT) setDT(DT)
   if (lowercase) DT <- lowercase(DT)
-
+  
   # TRANFORM PART
   if (!is.null(transform)) DT <- transform(DT)
   
   # WRITE PART
   if (!length(name_target)) name_target <- name[1]
 
-  etl_write(
-    to   = to, 
-    x    = DT,
-    name = name, 
-    schema = schema)
+  do.call(
+    what = etl_write,
+    args = union.list(
+      list(
+        to   = to, 
+        x    = DT,
+        name = name, 
+        schema = to_schema), 
+      read_args
+    )
+  )
 
 }
 
@@ -82,8 +93,8 @@ etl_read <- function(from, ...) {
   UseMethod("etl_read", from)  
 }
 
-#' @export
-etl_read.SQLiteConnection <- function(
+# for all S3 classes from DBI drivers
+etl_read_DBI <- function(
   from,
   name,
   schema = NULL,
@@ -108,6 +119,18 @@ etl_read.SQLiteConnection <- function(
   return(DT)
 }
 
+
+#' @export
+etl_read.SQLiteConnection <- function(...) {
+  etl_read_DBI(...)
+}
+
+#' @export
+etl_read.Oracle <- function(...) {
+  etl_read_DBI(...)
+}
+
+# TODO: ...
 
 #' @export
 etl_read.odbc32 <- function(
@@ -190,21 +213,31 @@ etl_write <- function(to, ...) {
 }
 
 #' @export
-etl_write.SQLiteConnection <- function(
+etl_write.SQLiteConnection <- function(...) {
+  etl_write_DBI(...)
+}
+
+#' @export
+etl_write.Oracle <- function(...) {
+  etl_write_DBI(...)
+}
+
+
+etl_write_DBI <- function(
   to,
   x,
   name,
   schema = NULL,
   ...
 ) {
-  # tab <- if (!is.null(schema)) paste0(schema, ".", name) else name
+  tab <- if (!is.null(schema)) paste0(schema, ".", name) else name
 
   do.call(
     DBI::dbWriteTable,
     args = union.list(
       list(
         conn  = to,
-        name  = name,
+        name  = tab,
         value = x),
       list(...)
       )
@@ -221,14 +254,14 @@ etl_write.odbc32 <- function(
   schema = NULL,
   ...
 ) {
-  tryCatch(odbc32::sqlDrop(con = to, name = tab), error = function(e) NULL)
+  tryCatch(odbc32::sqlDrop(con = to, name = name), error = function(e) NULL)
   
   do.call(
     odbc32::sqlSave,
     args = union.list(
       list(
         con  = to,
-        name = tab,
+        name = name,
         data = x),
       list(...)
     )
