@@ -8,7 +8,13 @@ add_diff_value(.data, value_var = NULL, by_vars = NULL,
   postfix = "_diff")
 }
 \arguments{
-\item{postfix}{}
+\item{.data}{input data.table}
+
+\item{value_var}{character; name of the original column}
+
+\item{by_vars}{character; vector of dimensions for 'group by'}
+
+\item{postfix}{character; posfix is added at the end of the name of the new column}
 }
 \description{
 Add a new column as a differenced value of existing column

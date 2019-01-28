@@ -1,10 +1,10 @@
 
 #' Add a new column as a differenced value of existing column
 #'
-#' @param .data
-#' @param value_var
-#' @param by_vars
-#' @param postfix
+#' @param .data input data.table
+#' @param value_var character; name of the original column
+#' @param by_vars character; vector of dimensions for 'group by'
+#' @param postfix character; posfix is added at the end of the name of the new column
 #'
 #' @return
 #' @export
