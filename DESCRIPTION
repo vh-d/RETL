@@ -15,4 +15,5 @@ Suggests:
     testthat,
     DBI,
     RSQLite, 
-    odbc32
+    odbc32,
+    stringr
