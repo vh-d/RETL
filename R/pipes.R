@@ -57,7 +57,7 @@ pipe_table <- function(
         x    = DT,
         name = name, 
         schema = to_schema), 
-      read_args
+      write_args
     )
   )
 
