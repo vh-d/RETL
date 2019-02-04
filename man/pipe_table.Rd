@@ -7,7 +7,8 @@
 \usage{
 pipe_table(name, from, to, name_target = NULL, transform = NULL,
   from_schema = NULL, to_schema = NULL, read_args = list(),
-  write_args = list(overwrite = TRUE), asDT = TRUE, lowercase = TRUE)
+  write_args = list(overwrite = TRUE), asDT = TRUE,
+  lowercase = FALSE)
 
 pipe_tables(tables, ...)
 }

@@ -25,7 +25,7 @@ pipe_table <- function(
   read_args   = list(),
   write_args  = list(overwrite = TRUE),
   asDT        = TRUE,
-  lowercase   = TRUE
+  lowercase   = FALSE
 ) {
 
   DT <- do.call(
