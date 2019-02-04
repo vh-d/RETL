@@ -190,7 +190,7 @@ etl_read.environment <- function(
   ...
 ) {
   
-  DT <- copy(from[[tab]])
+  DT <- copy(from[[name]])
   
   if (asDT) setDT(DT)
   
