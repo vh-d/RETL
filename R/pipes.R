@@ -41,7 +41,7 @@ pipe_table <- function(
   )
   
   # if (asDT) setDT(DT)
-  if (lowercase) DT <- lowercase(DT)
+  if (lowercase) DT <- lowercase_names(DT)
   
   # TRANFORM PART
   if (!is.null(transform)) DT <- transform(DT)
