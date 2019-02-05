@@ -256,6 +256,13 @@ etl_write.odbc32 <- function(
 ) {
   tryCatch(odbc32::sqlDrop(con = to, name = name), error = function(e) NULL)
   
+  # 64bit integers cannot be passed to 32bit R session
+  if (any(is_apply(x, "integer64"))) {
+    x <- copy(x)
+    warning("Converting 64bit integers to numeric.")
+    convert_cols(x, "integer64", "numeric")
+  }
+  
   do.call(
     odbc32::sqlSave,
     args = union.list(
