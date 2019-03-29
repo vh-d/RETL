@@ -1,7 +1,7 @@
 Package: RETL
 Type: Package
 Title: Various tools for ETL
-Version: 0.1.4
+Version: 0.1.5
 Author: Vaclav Hausenblas
 Maintainer: Vaclav Hausenblas <vaclav.hausenblas@gmail.com>
 Description: Provides function for ETL pipelines such as extraction, loading, tranformation, conversion... 

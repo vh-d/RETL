@@ -93,8 +93,8 @@ etl_read <- function(from, ...) {
   UseMethod("etl_read", from)  
 }
 
-# for all S3 classes from DBI drivers
-etl_read_DBI <- function(
+# for all DBI-compliant drivers
+etl_read.DBIConnection <- function(
   from,
   name,
   schema = NULL,
@@ -119,16 +119,6 @@ etl_read_DBI <- function(
   return(DT)
 }
 
-
-#' @export
-etl_read.SQLiteConnection <- function(...) {
-  etl_read_DBI(...)
-}
-
-#' @export
-etl_read.Oracle <- function(...) {
-  etl_read_DBI(...)
-}
 
 # TODO: ...
 
@@ -212,18 +202,9 @@ etl_write <- function(to, ...) {
   UseMethod("etl_write", to)
 }
 
-#' @export
-etl_write.SQLiteConnection <- function(...) {
-  etl_write_DBI(...)
-}
 
 #' @export
-etl_write.Oracle <- function(...) {
-  etl_write_DBI(...)
-}
-
-
-etl_write_DBI <- function(
+etl_write.DBIConnection <- function(
   to,
   x,
   name,
