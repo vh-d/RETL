@@ -47,8 +47,12 @@ convert_cols <- function(x, ...) {
 #' Modifies the referenced data.tables!
 #' @rdname convert_cols
 #' @export
-convert_cols.data.table <- function(x, from_class, to_class){
+convert_cols.data.table <- function(x, from_class, to_class, inplace = TRUE){
+  
   which_cols <- names(which(is_apply(x, from_class)))
+  if (!length(which_cols)) return(x)
+  
+  if (!isTRUE(inplace)) x <- copy(x)
   x[, (which_cols) := lapply(.SD, as, Class = to_class), .SDcols = which_cols][]
 
   return(x)

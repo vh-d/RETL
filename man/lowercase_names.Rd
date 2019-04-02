@@ -3,15 +3,25 @@
 \name{lowercase_names.data.table}
 \alias{lowercase_names.data.table}
 \alias{lowercase_names}
+\alias{setnames_lowercase.data.table}
+\alias{setnames_lowercase}
 \title{Make all data.table names lowercase}
 \usage{
 \method{lowercase_names}{data.table}(DT, inplace = FALSE)
 
 lowercase_names(x, ...)
+
+\method{setnames_lowercase}{data.table}(x, inplace = TRUE)
+
+setnames_lowercase(x, ...)
 }
 \arguments{
 \item{DT}{}
+
+\item{x}{}
 }
 \description{
+Make all data.table names lowercase
+
 Make all data.table names lowercase
 }
