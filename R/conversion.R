@@ -51,7 +51,6 @@ convert_cols.data.table <- function(x, from_class, to_class, inplace = TRUE){
   
   which_cols <- names(which(is_apply(x, from_class)))
   if (!length(which_cols)) return(x)
-  
   if (!isTRUE(inplace)) x <- copy(x)
   x[, (which_cols) := lapply(.SD, as, Class = to_class), .SDcols = which_cols][]
 
@@ -59,19 +58,38 @@ convert_cols.data.table <- function(x, from_class, to_class, inplace = TRUE){
 }
 
 
-#' @export
-Date2Char <- function(dt) {
-  cols <- names(which(sapply(colnames(dt), function(column) is(dt[[column]], "Date") || is(dt[[column]], "POSIXct")), useNames = TRUE))
-  if (length(cols) > 0) dt[, (cols) := lapply(cols, function(x) as.character(as.Date(get(x))))]
 
-  dt
+#' Convert all Date and POSIXct columns to character columns
+#' @param x a data.table object
+#'
+#' @param ... args passed to `as.Date()`
+#' @param inplace Should x be modifed by reference? If FALSE a modified copy is returned.
+#'
+#' @export
+Date2Char <- function(x, ..., inplace = TRUE) {
+  
+  cols <- names(which(sapply(colnames(x), function(column) is(x[[column]], "Date") || is(x[[column]], "POSIXct")), useNames = TRUE))
+  if (!length(cols)) return(x) 
+  if (!isTRUE(inplace)) x <- copy(x)
+  x[, (cols) := lapply(cols, function(x) as.character(as.Date(get(x), ...)))]
+
+  x
 }
 
+#' Convert all integer64 columns to numeric
+#' @param x a data.table object
+#'
+#' @param ... args passed to `as.numeric()`
+#' @param inplace Should x be modifed by reference? If FALSE a modified copy is returned.
+#'
 #' @export
-int64_to_numeric <- function(dt) {
-  cols <- names(which(sapply(colnames(dt), function(column) is(dt[[column]], "integer64")), useNames = TRUE))
-  if (length(cols) > 0) dt[, (cols) := lapply(cols, function(x) as.numeric(get(x)))]
+int64_to_numeric <- function(x, ..., inplace = TRUE) {
+  
+  cols <- names(which(sapply(colnames(x), function(column) is(x[[column]], "integer64")), useNames = TRUE))
+  if (!length(cols)) return(x) 
+  if (!isTRUE(inplace)) x <- copy(x)
+  x[, (cols) := lapply(cols, function(x) as.numeric(get(x), ...))]
 
-  dt
+  x
 }
 
