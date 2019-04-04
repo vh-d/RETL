@@ -232,7 +232,8 @@ etl_write.odbc32 <- function(
   to,
   x,
   name,
-  schema = NULL,
+  schema = NULL, # ignored?
+  rownames = FALSE,
   ...
 ) {
   tryCatch(odbc32::sqlDrop(con = to, name = name), error = function(e) NULL)
@@ -250,7 +251,9 @@ etl_write.odbc32 <- function(
       list(
         con  = to,
         name = name,
-        data = x),
+        data = x,
+        rownames = rownames
+      ),
       list(...)
     )
   )
