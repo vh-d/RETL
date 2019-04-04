@@ -27,7 +27,7 @@ pipe_table <- function(
   asDT        = TRUE,
   lowercase   = FALSE
 ) {
-
+  
   DT <- do.call(
     what = etl_read,
     args = union.list(
@@ -48,7 +48,7 @@ pipe_table <- function(
   
   # WRITE PART
   if (!length(name_target)) name_target <- name[1]
-
+  
   do.call(
     what = etl_write,
     args = union.list(
@@ -60,7 +60,7 @@ pipe_table <- function(
       write_args
     )
   )
-
+  
 }
 
 #' pipe_table vectorized
@@ -101,7 +101,7 @@ etl_read.DBIConnection <- function(
   asDT   = TRUE,
   ...
 ) {
-
+  
   tab <- if (!is.null(schema)) paste0(schema, ".", name) else name
   
   DT <- do.call(
@@ -130,17 +130,17 @@ etl_read.odbc32 <- function(
   asDT   = TRUE,
   ...
 ) {
-
+  
   DT <- do.call(
     odbc32::sqlQuery,
     args =
-        c(list(
-          con   = from,
-          query = stringr::str_interp("select * from ${tab}")),
-          ...
-        )
-    )
-
+      c(list(
+        con   = from,
+        query = stringr::str_interp("select * from ${tab}")),
+        ...
+      )
+  )
+  
   if (asDT) setDT(DT)
   
   return(DT)
@@ -198,11 +198,26 @@ etl_read.environment <- function(
 #' @param ... arguments passed to write/load function
 #'
 #' @export
+#' @seealso
+#' \code{\link{etl_write.DBIConnection}} for writing over DBI driver, 
+#' 
+#' \code{\link{etl_write.character}} for writing to CSV files, 
+#' 
+#' \code{\link{etl_write.odbc32}} for writing over odbc32 driver
+#' 
+#' \code{\link{etl_write.environment}} for writing to R environment
 etl_write <- function(to, ...) {
   UseMethod("etl_write", to)
 }
 
 
+#' Write tables via DBI connection
+#' @param to 
+#' @param x data.table
+#' @param name name of target table
+#' @param schema prefix to table name
+#' @param ... args passed to dbWriteTable
+#'
 #' @export
 etl_write.DBIConnection <- function(
   to,
@@ -212,7 +227,7 @@ etl_write.DBIConnection <- function(
   ...
 ) {
   tab <- if (!is.null(schema)) paste0(schema, ".", name) else name
-
+  
   do.call(
     DBI::dbWriteTable,
     args = union.list(
@@ -221,12 +236,22 @@ etl_write.DBIConnection <- function(
         name  = tab,
         value = x),
       list(...)
-      )
+    )
   )
   
 }
 
 
+#' Write tables via odbc32 connection
+#' @param to 
+#'
+#' @param x data.table
+#' @param name name of the target table
+#' @param schema ignored
+#' @param rownames logical;
+#' @param safer logical;
+#' @param ... 
+#'
 #' @export
 etl_write.odbc32 <- function(
   to,
@@ -234,6 +259,7 @@ etl_write.odbc32 <- function(
   name,
   schema = NULL, # ignored?
   rownames = FALSE,
+  safer = FALSE,
   ...
 ) {
   tryCatch(odbc32::sqlDrop(con = to, name = name), error = function(e) NULL)
@@ -252,13 +278,21 @@ etl_write.odbc32 <- function(
         con  = to,
         name = name,
         data = x,
-        rownames = rownames
+        rownames = rownames,
+        safer = safer
       ),
       list(...)
     )
   )
 }
 
+#' Write tables to CSV files
+#' @param to name of the target file
+#' @param x data.table
+#' @param name ignored
+#' @param schema ignored
+#' @param ... args passed to `fwrite()`
+#'
 #' @export
 etl_write.character <- function(
   to,
@@ -267,7 +301,7 @@ etl_write.character <- function(
   schema = NULL,
   ...
 ) {
-
+  
   do.call(
     fwrite,
     args = union.list(
@@ -281,12 +315,16 @@ etl_write.character <- function(
   
 }
 
+#' Write tables to R environment
+#' @param to R environemnt
+#' @param x data.table
+#' @param name name of the target object
+#' @param ... ignored
 #' @export
 etl_write.environment <- function(
   to,
   x,
   name,
-  schema = NULL,
   ...
 ) {
   

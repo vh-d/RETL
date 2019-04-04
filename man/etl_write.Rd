@@ -20,3 +20,12 @@ etl_write(to, ...)
 \description{
 Write (or load) part of ETL
 }
+\seealso{
+\code{\link{etl_write.DBIConnection}} for writing over DBI driver, 
+
+\code{\link{etl_write.character}} for writing to CSV files, 
+
+\code{\link{etl_write.odbc32}} for writing over odbc32 driver
+
+\code{\link{etl_write.environment}} for writing to R environment
+}
