@@ -94,6 +94,7 @@ etl_read <- function(from, ...) {
 }
 
 # for all DBI-compliant drivers
+#' @export
 etl_read.DBIConnection <- function(
   from,
   name,
