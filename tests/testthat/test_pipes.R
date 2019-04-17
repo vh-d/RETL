@@ -1,3 +1,5 @@
+
+# etl_read and etl_write --------------------------------------------------
 context("Pipes: etl_read, etl_write")
 
 if (!requireNamespace("DBI")) stop("DBI package required!")
@@ -48,6 +50,9 @@ test_that("extracting tables from a DB", {
   expect_equal(dt2, dt1)
   expect_error(etl_read(from = dbcon, name = "df", asDT = FALSE, lowercase = FALSE), "no such table")
 })
+
+
+# pipe_table --------------------------------------------------------------
 
 context("Pipes: pipe_table")
 

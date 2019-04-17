@@ -71,7 +71,7 @@ Date2Char <- function(x, ..., inplace = TRUE) {
   cols <- names(which(sapply(colnames(x), function(column) is(x[[column]], "Date") || is(x[[column]], "POSIXct")), useNames = TRUE))
   if (!length(cols)) return(x) 
   if (!isTRUE(inplace)) x <- copy(x)
-  x[, (cols) := lapply(cols, function(x) as.character(as.Date(get(x), ...)))]
+  x[, (cols) := lapply(cols, function(var_name) as.character(as.Date(get(var_name), ...)))]
 
   x
 }
@@ -88,7 +88,7 @@ int64_to_numeric <- function(x, ..., inplace = TRUE) {
   cols <- names(which(sapply(colnames(x), function(column) is(x[[column]], "integer64")), useNames = TRUE))
   if (!length(cols)) return(x) 
   if (!isTRUE(inplace)) x <- copy(x)
-  x[, (cols) := lapply(cols, function(x) as.numeric(get(x), ...))]
+  x[, (cols) := lapply(cols, function(var_name) as.numeric(get(var_name), ...))]
 
   x
 }
