@@ -12,9 +12,6 @@ dtq(x, i, j, by, keyby, with = TRUE,
   allow.cartesian = getOption("datatable.allow.cartesian"),
   drop = NULL, on = NULL)
 }
-\arguments{
-\item{.}{see \code{\link[data.table]{data.table}}}
-}
 \description{
 data.table query - alias for data.table's \code{`[`} method
 }
