@@ -4,7 +4,7 @@
     "ACCESS" = 
       c(
         factor    = "VARCHAR(255)",
-        POSIXct   = "DATETIME",
+        POSIXt    = "DATETIME",
         Date      = "DATE",
         difftime  = "TIME",
         blob      = "BINARY",
@@ -15,3 +15,5 @@
         list      = "VARCHAR(255)"
       )
   )
+
+# TODO: use S3 methods a la odbc package
