@@ -132,12 +132,14 @@ etl_read.odbc32 <- function(
   ...
 ) {
   
+  if (length(schema)) name <- paste0(schema, ".", name)
+  
   DT <- do.call(
     odbc32::sqlQuery,
     args =
       c(list(
         con   = from,
-        query = stringr::str_interp("select * from ${tab}")),
+        query = stringr::str_interp("select * from ${name}")),
         ...
       )
   )
