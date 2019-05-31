@@ -245,6 +245,57 @@ etl_write.DBIConnection <- function(
 }
 
 
+
+#' Write tables via RODBC connection
+#' @param to 
+#'
+#' @param x data.table
+#' @param name name of the target table
+#' @param schema ignored
+#' @param rownames logical;
+#' @param safer logical;
+#' @param varTypes names character vector
+#' @param ... 
+#'
+#' @export
+etl_write.RODBC <- function(
+  to,
+  x,
+  name,
+  schema = NULL, # ignored?
+  rownames = FALSE,
+  safer = FALSE,
+  varTypes = NULL,
+  ...
+) {
+  tryCatch(RODBC::sqlDrop(channel = to, sqtable = name, errors = TRUE), error = function(e) NULL)
+  
+  # 64bit integers cannot be passed to 32bit R session
+  if (any(is_apply(x, "integer64"))) {
+    x <- copy(x)
+    warning("Converting 64bit integers to numeric.")
+    convert_cols(x, "integer64", "numeric")
+  }
+  
+  # resolve datatypes
+  if (!length(varTypes)) {
+    driver <- RODBC::odbcGetInfo(to)[[1L]]
+    varTypes <- .RODBC_DT_CONV[[driver]][sapply(x, function(y) tail(class(y), 1L))]
+    names(varTypes) <- names(x)
+  }
+  
+  RODBC::sqlSave(
+    channel = to, 
+    tablename = name, 
+    dat = x, 
+    rownames = rownames, 
+    safer = safer,
+    varTypes = varTypes,
+    ...
+  )
+
+}
+
 #' Write tables via odbc32 connection
 #' @param to 
 #'
@@ -253,6 +304,7 @@ etl_write.DBIConnection <- function(
 #' @param schema ignored
 #' @param rownames logical;
 #' @param safer logical;
+#' @param varTypes names character vector
 #' @param ... 
 #'
 #' @export
@@ -263,6 +315,7 @@ etl_write.odbc32 <- function(
   schema = NULL, # ignored?
   rownames = FALSE,
   safer = FALSE,
+  varTypes = NULL,
   ...
 ) {
   tryCatch(odbc32::sqlDrop(con = to, name = name), error = function(e) NULL)
@@ -274,6 +327,13 @@ etl_write.odbc32 <- function(
     convert_cols(x, "integer64", "numeric")
   }
   
+  # resolve datatypes
+  if (!length(varTypes)) {
+    driver <- odbc32::odbcGetInfo(to)[[1L]]
+    varTypes <- .RODBC_DT_CONV[[driver]][sapply(x, function(y) tail(class(y), 1L))]
+    names(varTypes) <- names(x)
+  }
+  
   do.call(
     odbc32::sqlSave,
     args = union.list(
@@ -282,7 +342,8 @@ etl_write.odbc32 <- function(
         name = name,
         data = x,
         rownames = rownames,
-        safer = safer
+        safer = safer,
+        varTypes = varTypes
       ),
       list(...)
     )
