@@ -6,11 +6,45 @@
 `RETL` is an R package that aims to provide practical tools for ETL
 processes using R’s wide range of APIs to data sources.
 
+It is intended to be used together with the `Rflows` package (not yet
+open-sourced) as universal API to data stored in databases, files, excel
+sheets. RETL relies heavily on the `data.table` package.
+
 ## Installation
 
-You can install the master version of RETL from
-[GitHub](https://github.com/vh-d/RETL) with:
+RETL can be installed from [GitHub](https://github.com/vh-d/RETL) by
+running:
 
 ``` r
 devtools::install_github("vh-d/RETL")
+```
+
+## Examples
+
+``` r
+library(RETL)
+library(magrittr)
+
+# establish connections
+my_db <- DBI::dbConnect(RSQLite::SQLite(), "path/to/my.db")
+your_csv <- "path/to/your.csv"
+your_db <- dbConnect(RMariaDB::MariaDB(), group = "your-db")
+```
+
+### Pipes
+
+``` r
+# simple extract and load
+etl_read(from = my_db, name = "customers") %>% etl_write(to = your_csv)
+
+# extract -> transform -> load
+etl_read(from = my_db, name = "orders") %>% # extract from a database
+  dbq(, order_year := year(order_date)) %>% # transform (adding a new column)
+  etl_write(to = your_db, name = "customers") # load
+```
+
+### Other tools
+
+``` r
+set_index(table = "customers", c("id", "order_year"), your_db)
 ```
