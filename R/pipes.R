@@ -78,6 +78,56 @@ pipe_tables <- function(tables, ...) {
 }
 
 
+#' complete ETL pipe
+#'
+#' @param from DBI/R environment/file name/...
+#' @param to DBI/R environment/file name/...
+#' @param transform transformation function
+#' @param read_args list of arguments passed to read/extract function
+#' @param write_args list of arguments passed to write/load function
+#' @param asDT logical; convert the data.frame to data.table during the etl?
+#'
+#' @rdname pipe_table
+#' @export
+etl_pipe <- function(
+  from,
+  to,
+  transform   = NULL,
+  read_args   = list(),
+  write_args  = list(overwrite = TRUE),
+  asDT        = TRUE,
+  lowercase   = FALSE
+) {
+  
+  # EXTRACT/READ
+  DT <- do.call(
+    what = etl_read,
+    args = union.list(
+      list(
+        from = from, 
+        asDT = asDT
+      ), 
+      read_args
+    )
+  )
+  
+  # TRANFORM
+  if (!is.null(transform)) DT <- transform(DT)
+  
+  # WRITE
+  do.call(
+    what = etl_write,
+    args = union.list(
+      list(
+        to = to, 
+        x  = DT
+      ), 
+      write_args
+    )
+  )
+  
+}
+
 #' Read (extract) part of ETL
 #' reading tables
 #'

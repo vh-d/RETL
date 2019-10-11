@@ -3,6 +3,7 @@
 \name{pipe_table}
 \alias{pipe_table}
 \alias{pipe_tables}
+\alias{etl_pipe}
 \title{complete ETL pipe in a single function}
 \usage{
 pipe_table(name, from, to, name_target = NULL, transform = NULL,
@@ -11,6 +12,10 @@ pipe_table(name, from, to, name_target = NULL, transform = NULL,
   lowercase = FALSE)
 
 pipe_tables(tables, ...)
+
+etl_pipe(from, to, transform = NULL, read_args = list(),
+  write_args = list(overwrite = TRUE), asDT = TRUE,
+  lowercase = FALSE)
 }
 \arguments{
 \item{name}{name of the table}
@@ -38,9 +43,23 @@ pipe_tables(tables, ...)
 \item{tables}{vector of table names}
 
 \item{...}{args passed to `pipe_table()`}
+
+\item{from}{DBI/R environment/file name/...}
+
+\item{to}{DBI/R environment/file name/...}
+
+\item{transform}{transformation function}
+
+\item{read_args}{list of arguments passed to read/extract function}
+
+\item{write_args}{list of arguments passed to write/load function}
+
+\item{asDT}{logical; convert the data.frame to data.table during the etl?}
 }
 \description{
 complete ETL pipe in a single function
 
 pipe_table vectorized
+
+complete ETL pipe
 }
