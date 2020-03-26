@@ -38,9 +38,9 @@ your_db <- dbConnect(RMariaDB::MariaDB(), group = "your-db")
 etl_read(from = my_db, name = "customers") %>% etl_write(to = your_csv)
 
 # extract -> transform -> load
-etl_read(from = my_db, name = "orders") %>% # extract from a database
-  dbq(, order_year := year(order_date)) %>% # transform (adding a new column)
-  etl_write(to = your_db, name = "customers") # load
+etl_read(from = my_db, name = "orders") %>% # db query: EXTRACT from a database
+  dtq(, order_year := year(order_date)) %>% # data.table query: TRANSFORM (adding a new column)
+  etl_write(to = your_db, name = "customers") # LOAD to a db
 ```
 
 ### Other tools
