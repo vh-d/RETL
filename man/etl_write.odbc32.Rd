@@ -4,8 +4,16 @@
 \alias{etl_write.odbc32}
 \title{Write tables via odbc32 connection}
 \usage{
-\method{etl_write}{odbc32}(to, x, name, schema = NULL,
-  rownames = FALSE, safer = FALSE, varTypes = NULL, ...)
+\method{etl_write}{odbc32}(
+  to,
+  x,
+  name,
+  schema = NULL,
+  rownames = FALSE,
+  safer = FALSE,
+  varTypes = NULL,
+  ...
+)
 }
 \arguments{
 \item{to}{}

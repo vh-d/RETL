@@ -4,8 +4,16 @@
 \alias{etl_write.RODBC}
 \title{Write tables via RODBC connection}
 \usage{
-\method{etl_write}{RODBC}(to, x, name, schema = NULL, rownames = FALSE,
-  safer = FALSE, varTypes = NULL, ...)
+\method{etl_write}{RODBC}(
+  to,
+  x,
+  name,
+  schema = NULL,
+  rownames = FALSE,
+  safer = FALSE,
+  varTypes = NULL,
+  ...
+)
 }
 \arguments{
 \item{to}{}

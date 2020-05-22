@@ -7,8 +7,7 @@
 \usage{
 convert_cols(x, ...)
 
-\method{convert_cols}{data.table}(x, from_class, to_class,
-  inplace = TRUE)
+\method{convert_cols}{data.table}(x, from_class, to_class, inplace = TRUE)
 }
 \arguments{
 \item{x}{an input data.table}

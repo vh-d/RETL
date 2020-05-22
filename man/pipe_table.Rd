@@ -6,23 +6,38 @@
 \alias{etl_pipe}
 \title{complete ETL pipe in a single function}
 \usage{
-pipe_table(name, from, to, name_target = NULL, transform = NULL,
-  from_schema = NULL, to_schema = NULL, read_args = list(),
-  write_args = list(overwrite = TRUE), asDT = TRUE,
-  lowercase = FALSE)
+pipe_table(
+  name,
+  from,
+  to,
+  name_target = NULL,
+  transform = NULL,
+  from_schema = NULL,
+  to_schema = NULL,
+  read_args = list(),
+  write_args = list(overwrite = TRUE),
+  asDT = TRUE,
+  lowercase = FALSE
+)
 
 pipe_tables(tables, ...)
 
-etl_pipe(from, to, transform = NULL, read_args = list(),
-  write_args = list(overwrite = TRUE), asDT = TRUE,
-  lowercase = FALSE)
+etl_pipe(
+  from,
+  to,
+  transform = NULL,
+  read_args = list(),
+  write_args = list(overwrite = TRUE),
+  asDT = TRUE,
+  lowercase = FALSE
+)
 }
 \arguments{
 \item{name}{name of the table}
 
-\item{from}{DBI/R environment/file name}
+\item{from}{DBI/R environment/file name/...}
 
-\item{to}{DBI/R environment/file name}
+\item{to}{DBI/R environment/file name/...}
 
 \item{name_target}{optional parameter specifying new name of the table at the target}
 
@@ -43,18 +58,6 @@ etl_pipe(from, to, transform = NULL, read_args = list(),
 \item{tables}{vector of table names}
 
 \item{...}{args passed to `pipe_table()`}
-
-\item{from}{DBI/R environment/file name/...}
-
-\item{to}{DBI/R environment/file name/...}
-
-\item{transform}{transformation function}
-
-\item{read_args}{list of arguments passed to read/extract function}
-
-\item{write_args}{list of arguments passed to write/load function}
-
-\item{asDT}{logical; convert the data.frame to data.table during the etl?}
 }
 \description{
 complete ETL pipe in a single function
