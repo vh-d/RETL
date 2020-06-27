@@ -4,8 +4,7 @@
 \alias{add_diff_value}
 \title{Add a new column as a differenced value of existing column}
 \usage{
-add_diff_value(.data, value_var = NULL, by_vars = NULL,
-  postfix = "_diff")
+add_diff_value(.data, value_var = NULL, by_vars = NULL, postfix = "_diff")
 }
 \arguments{
 \item{.data}{input data.table}
@@ -15,6 +14,9 @@ add_diff_value(.data, value_var = NULL, by_vars = NULL,
 \item{by_vars}{character; vector of dimensions for 'group by'}
 
 \item{postfix}{character; posfix is added at the end of the name of the new column}
+}
+\value{
+
 }
 \description{
 Add a new column as a differenced value of existing column
