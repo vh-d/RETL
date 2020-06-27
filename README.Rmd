@@ -15,10 +15,10 @@ knitr::opts_chunk$set(
 
 # RETL
 
-`RETL` is an R package that aims to provide practical tools for ETL processes using R's wide range of APIs to data sources.
+`RETL` is an R package that provides tools for writing ETL jobs in R. It stands on R's wide range of APIs to various types of data sources.
 
 
-It is intended to be used together with the `Rflows` package (not yet open-sourced) as universal API to data stored in databases, files, excel sheets. RETL  relies heavily on the `data.table` package.
+It is intended to be used together with the *[Rflow](https://github.com/vh-d/Rflow)* and *[RETLflow](https://github.com/vh-d/RETLflow)* packages as universal API to data stored in databases, files, excel sheets. RETL relies heavily on the `data.table` package for fast data transofrmations.
 
 
 ## Installation
@@ -37,9 +37,9 @@ library(RETL)
 library(magrittr)
 
 # establish connections
-my_db <- DBI::dbConnect(RSQLite::SQLite(), "path/to/my.db")
+my_db    <- DBI::dbConnect(RSQLite::SQLite(), "path/to/my.db")
 your_csv <- "path/to/your.csv"
-your_db <- dbConnect(RMariaDB::MariaDB(), group = "your-db")
+your_db  <- dbConnect(RMariaDB::MariaDB(), group = "your-db")
 ```
 
 
@@ -47,7 +47,7 @@ your_db <- dbConnect(RMariaDB::MariaDB(), group = "your-db")
 
 ``` r
 # simple extract and load
-etl_read(from = my_db, name = "customers") %>% etl_write(to = your_csv)
+etl_read(from = your_csv) %>% etl_write(to = my_db, name = "customers")
 
 # extract -> transform -> load
 etl_read(from = my_db, name = "orders") %>% # extract from a database
